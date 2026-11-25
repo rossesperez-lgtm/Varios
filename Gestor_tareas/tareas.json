@@ -1,0 +1,51 @@
+[
+  {
+    "titulo": "Tarea 1",
+    "descripcion": "Ejemplo de Tarea 1",
+    "asignado_a": "Richard Paul Osses Perez",
+    "prioridad": "Alta",
+    "creada_en": "2026-11-25T02:05:03.286071-03:00",
+    "completada": true,
+    "completada_en": "2026-11-25T02:05:24.869211-03:00",
+    "comentarios": [
+      {
+        "texto": "Inicio",
+        "creado_en": "2026-11-25T02:05:03.286786-03:00"
+      },
+      {
+        "texto": "tarea finalizada",
+        "creado_en": "2026-11-25T02:05:32.261762-03:00"
+      }
+    ]
+  },
+  {
+    "titulo": "Tarea 2",
+    "descripcion": "Tarea 2",
+    "asignado_a": "Juan",
+    "prioridad": "Baja",
+    "creada_en": "2026-11-25T02:07:46.310348-03:00",
+    "completada": false,
+    "completada_en": null,
+    "comentarios": [
+      {
+        "texto": "inicio",
+        "creado_en": "2026-11-25T02:07:46.311140-03:00"
+      }
+    ]
+  },
+  {
+    "titulo": "Tarea 3",
+    "descripcion": "Tarea 3",
+    "asignado_a": "Pedro",
+    "prioridad": "Media",
+    "creada_en": "2026-11-25T02:08:01.112376-03:00",
+    "completada": false,
+    "completada_en": null,
+    "comentarios": [
+      {
+        "texto": "inicio",
+        "creado_en": "2026-11-25T02:08:01.112557-03:00"
+      }
+    ]
+  }
+]

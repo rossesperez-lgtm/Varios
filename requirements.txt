@@ -1,4 +1,5 @@
-# Dependencias externas usadas por Analisis.py.
+# Dependencias externas usadas por los mini proyectos.
 # Calculadora.py y FizzBuzz.py solo usan la biblioteca estandar de Python.
 pandas
 matplotlib
+Flask

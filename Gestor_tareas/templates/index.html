@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gestor de tareas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="contenedor">
+        <h1>Gestor de tareas</h1>
+        <p class="nota">Las tareas y sus comentarios se guardan en el archivo tareas.json del proyecto.</p>
+        <p><a class="enlace-listado" href="{{ url_for('listar_tareas') }}">Ver listado general (solo lectura)</a></p>
+
+        <form class="formulario" action="{{ url_for('agregar_tarea') }}" method="post">
+            <h2>Nueva tarea</h2>
+            <label for="titulo">Título</label>
+            <input id="titulo" name="titulo" type="text" maxlength="120" required>
+
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" name="descripcion" rows="3" maxlength="1000"></textarea>
+
+            <label for="asignado_a">Usuario asignado</label>
+            <input id="asignado_a" name="asignado_a" type="text" maxlength="80"
+                   placeholder="Opcional; por defecto, Sin asignar">
+
+            <label for="prioridad">Prioridad</label>
+            <select id="prioridad" name="prioridad">
+                <option value="Baja">Baja</option>
+                <option value="Media" selected>Media</option>
+                <option value="Alta">Alta</option>
+            </select>
+
+            <label for="comentario">Comentario inicial (opcional)</label>
+            <textarea id="comentario" name="comentario" rows="2" maxlength="500"></textarea>
+
+            <div class="entrada">
+                <button type="submit">Crear tarea</button>
+            </div>
+        </form>
+
+        {% if error is defined %}
+            <p class="error" role="alert">{{ error }}</p>
+        {% endif %}
+
+        <h2>Mis tareas</h2>
+        {% if tareas %}
+            <ul class="lista">
+                {% for tarea in tareas %}
+                    <li>
+                        <article class="tarea">
+                            <div class="tarea-detalle">
+                                <h3 class="{{ 'completada' if tarea.completada else '' }}">
+                                    {{ tarea.titulo }}
+                                </h3>
+                                <p><strong>Descripción:</strong>
+                                    {{ tarea.descripcion or 'Sin descripción' }}
+                                </p>
+                                <p><strong>Asignado a:</strong> {{ tarea.asignado_a }}</p>
+                                <p><strong>Prioridad:</strong> {{ tarea.prioridad }}</p>
+                                <p><strong>Creada:</strong>
+                                    {{ tarea.creada_en.strftime('%d/%m/%Y %H:%M') }}
+                                </p>
+                                {% if tarea.completada_en %}
+                                    <p><strong>Completada:</strong>
+                                        {{ tarea.completada_en.strftime('%d/%m/%Y %H:%M') }}
+                                    </p>
+                                {% endif %}
+                            </div>
+
+                            <div class="acciones">
+                                <form action="{{ url_for('completar_tarea', indice=loop.index0) }}" method="post">
+                                    <button type="submit">
+                                        {{ 'Reabrir' if tarea.completada else 'Completar' }}
+                                    </button>
+                                </form>
+                                <form action="{{ url_for('eliminar_tarea', indice=loop.index0) }}" method="post">
+                                    <button class="eliminar" type="submit">Eliminar</button>
+                                </form>
+                            </div>
+
+                            <section class="comentarios">
+                                <h4>Comentarios</h4>
+                                {% if tarea.comentarios %}
+                                    <ul>
+                                        {% for comentario in tarea.comentarios %}
+                                            <li>
+                                                {{ comentario.texto }}
+                                                <small>
+                                                    {{ comentario.creado_en.strftime('%d/%m/%Y %H:%M') }}
+                                                </small>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p class="nota">Sin comentarios.</p>
+                                {% endif %}
+
+                                <form class="form-comentario"
+                                      action="{{ url_for('agregar_comentario', indice=loop.index0) }}"
+                                      method="post">
+                                    <label for="comentario-{{ loop.index0 }}">Agregar comentario</label>
+                                    <textarea id="comentario-{{ loop.index0 }}" name="comentario"
+                                              rows="2" maxlength="500" required></textarea>
+                                    <button type="submit">Comentar</button>
+                                </form>
+                            </section>
+                        </article>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="vacio">Todavía no hay tareas. Agrega la primera arriba.</p>
+        {% endif %}
+    </main>
+</body>
+</html>

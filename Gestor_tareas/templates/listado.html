@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Listado de tareas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="contenedor contenedor-listado">
+        <h1>Listado de tareas</h1>
+        <p class="nota">Vista de solo lectura: aquí no se pueden modificar ni eliminar tareas.</p>
+        <p><a class="enlace-listado" href="{{ url_for('inicio') }}">Volver al gestor</a></p>
+
+        <form class="filtros" action="{{ url_for('listar_tareas') }}" method="get">
+            <label for="orden">Ordenar por</label>
+            <select id="orden" name="orden">
+                <option value="fecha" {% if orden == 'fecha' %}selected{% endif %}>
+                    Fecha de creación
+                </option>
+                <option value="asignado" {% if orden == 'asignado' %}selected{% endif %}>
+                    Usuario asignado
+                </option>
+                <option value="prioridad" {% if orden == 'prioridad' %}selected{% endif %}>
+                    Prioridad
+                </option>
+            </select>
+            <label for="direccion">Dirección</label>
+            <select id="direccion" name="direccion">
+                <option value="asc" {% if direccion == 'asc' %}selected{% endif %}>
+                    Ascendente (A-Z, más antigua, Baja a Alta)
+                </option>
+                <option value="desc" {% if direccion == 'desc' %}selected{% endif %}>
+                    Descendente (Z-A, más reciente, Alta a Baja)
+                </option>
+            </select>
+            <label for="prioridad">Prioridad</label>
+            <select id="prioridad" name="prioridad">
+                <option value="todas" {% if filtro_prioridad == 'todas' %}selected{% endif %}>
+                    Todas
+                </option>
+                <option value="Alta" {% if filtro_prioridad == 'Alta' %}selected{% endif %}>
+                    Alta
+                </option>
+                <option value="Media" {% if filtro_prioridad == 'Media' %}selected{% endif %}>
+                    Media
+                </option>
+                <option value="Baja" {% if filtro_prioridad == 'Baja' %}selected{% endif %}>
+                    Baja
+                </option>
+            </select>
+            <label for="estado">Estado</label>
+            <select id="estado" name="estado">
+                <option value="todos" {% if filtro_estado == 'todos' %}selected{% endif %}>
+                    Todos
+                </option>
+                <option value="pendientes" {% if filtro_estado == 'pendientes' %}selected{% endif %}>
+                    Pendientes
+                </option>
+                <option value="completadas" {% if filtro_estado == 'completadas' %}selected{% endif %}>
+                    Completadas
+                </option>
+            </select>
+            <button type="submit">Aplicar</button>
+            <a class="enlace-listado" href="{{ url_for('listar_tareas') }}">Restablecer</a>
+        </form>
+
+        <p class="nota">Mostrando {{ tareas|length }} de {{ total_tareas }} tareas.</p>
+        {% if tareas %}
+            <div class="tabla-contenedor">
+                <table class="tabla-tareas">
+                    <thead>
+                        <tr>
+                            <th scope="col">Tarea</th>
+                            <th scope="col">Fecha de creación</th>
+                            <th scope="col">Fecha de cierre</th>
+                            <th scope="col">Asignado a</th>
+                            <th scope="col">Estado actual</th>
+                            <th scope="col">Prioridad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tarea in tareas %}
+                            <tr>
+                                <td>{{ tarea.titulo }}</td>
+                                <td>{{ tarea.creada_en.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>
+                                    {% if tarea.completada_en %}
+                                        {{ tarea.completada_en.strftime('%d/%m/%Y %H:%M') }}
+                                    {% else %}
+                                        <span class="nota">Sin cerrar</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ tarea.asignado_a }}</td>
+                                <td>
+                                    <span class="estado {{ 'estado-completada' if tarea.completada else 'estado-pendiente' }}">
+                                        {{ 'Completada' if tarea.completada else 'Pendiente' }}
+                                    </span>
+                                </td>
+                                <td>{{ tarea.prioridad }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            {% if total_tareas %}
+                <p class="vacio">No hay tareas que coincidan con los filtros seleccionados.</p>
+            {% else %}
+                <p class="vacio">Todavía no hay tareas para mostrar.</p>
+            {% endif %}
+        {% endif %}
+    </main>
+</body>
+</html>
