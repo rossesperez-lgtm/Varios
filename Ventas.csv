@@ -1,0 +1,13 @@
+Fecha;Categoria;Producto;Cantidad;Precio;Region
+2026-01-03;Bebidas;Cafe;3;4.50;Centro
+2026-01-05;Alimentos;Arroz;2;2.25;Norte
+2026-01-07;Limpieza;Jabon;4;1.75;Centro
+2026-01-10;Bebidas;Te;5;3.00;Sur
+2026-01-12;Alimentos;Pasta;3;1.50;Norte
+2026-01-14;Bebidas;Cafe;2;4.50;Centro
+2026-01-17;Limpieza;Detergente;1;6.25;Sur
+2026-01-19;Alimentos;Arroz;5;2.25;
+2026-01-22;Bebidas;Jugo;4;2.75;Norte
+2026-01-25;Limpieza;Jabon;3;1.75;
+2026-01-27;Alimentos;Pasta;2;1.50;Centro
+2026-01-30;Bebidas;Te;1;3.00;Sur
