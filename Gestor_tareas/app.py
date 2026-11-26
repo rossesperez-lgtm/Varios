@@ -1,3 +1,5 @@
+"""Aplicación Flask para gestionar tareas y guardarlas en un archivo JSON."""
+
 import json
 import os
 import tempfile
@@ -12,17 +14,22 @@ ARCHIVO_TAREAS = Path(__file__).with_name("tareas.json")
 
 
 def fecha_actual() -> datetime:
+    """Devuelve la fecha y hora locales con su zona horaria."""
     return datetime.now().astimezone()
 
 
 @dataclass
 class Comentario:
+    """Representa un comentario asociado a una tarea."""
+
     texto: str
     creado_en: datetime = field(default_factory=fecha_actual)
 
 
 @dataclass
 class Tarea:
+    """Representa una tarea con asignación, prioridad, estado y comentarios."""
+
     titulo: str
     descripcion: str
     asignado_a: str
@@ -34,6 +41,7 @@ class Tarea:
 
 
 def tarea_a_diccionario(tarea: Tarea) -> dict:
+    """Convierte una tarea a un diccionario compatible con JSON."""
     return {
         "titulo": tarea.titulo,
         "descripcion": tarea.descripcion,
@@ -55,6 +63,7 @@ def tarea_a_diccionario(tarea: Tarea) -> dict:
 
 
 def tarea_desde_diccionario(datos: dict, numero: int) -> Tarea:
+    """Reconstruye una tarea desde un registro leído del archivo JSON."""
     try:
         if not isinstance(datos, dict):
             raise TypeError("El registro debe ser un objeto JSON.")
@@ -97,6 +106,7 @@ def tarea_desde_diccionario(datos: dict, numero: int) -> Tarea:
 
 
 def cargar_tareas() -> list[Tarea]:
+    """Carga las tareas guardadas y valida el formato del archivo JSON."""
     if not ARCHIVO_TAREAS.exists():
         return []
 
@@ -119,6 +129,7 @@ def cargar_tareas() -> list[Tarea]:
 
 
 def guardar_tareas() -> None:
+    """Guarda la lista actual de tareas en el archivo JSON del proyecto."""
     archivo_temporal = None
     try:
         with tempfile.NamedTemporaryFile(
@@ -149,10 +160,12 @@ tareas: list[Tarea] = cargar_tareas()
 
 @app.before_request
 def recargar_tareas():
+    """Recarga las tareas desde el archivo antes de cada solicitud."""
     tareas[:] = cargar_tareas()
 
 
 def obtener_tarea(indice: int) -> Tarea:
+    """Devuelve una tarea por índice o responde con un error 404."""
     if not 0 <= indice < len(tareas):
         abort(404)
     return tareas[indice]
@@ -160,11 +173,13 @@ def obtener_tarea(indice: int) -> Tarea:
 
 @app.get("/")
 def inicio():
+    """Muestra el formulario principal y las tareas actuales."""
     return render_template("index.html", tareas=tareas)
 
 
 @app.get("/tareas/listado")
 def listar_tareas():
+    """Muestra las tareas filtradas y ordenadas en una vista de solo lectura."""
     orden = request.args.get("orden", "fecha")
     direccion = request.args.get("direccion", "desc")
     filtro_prioridad = request.args.get("prioridad", "todas")
@@ -219,6 +234,7 @@ def listar_tareas():
 
 @app.post("/tareas")
 def agregar_tarea():
+    """Valida el formulario, crea una tarea y guarda los cambios."""
     titulo = request.form.get("titulo", "").strip()
     descripcion = request.form.get("descripcion", "").strip()
     asignado_a = request.form.get("asignado_a", "").strip() or "Sin asignar"
@@ -255,6 +271,7 @@ def agregar_tarea():
 
 @app.post("/tareas/<int:indice>/completar")
 def completar_tarea(indice):
+    """Alterna el estado de una tarea y actualiza su fecha de cierre."""
     tarea = obtener_tarea(indice)
     tarea.completada = not tarea.completada
     tarea.completada_en = fecha_actual() if tarea.completada else None
@@ -264,6 +281,7 @@ def completar_tarea(indice):
 
 @app.post("/tareas/<int:indice>/comentarios")
 def agregar_comentario(indice):
+    """Valida y agrega un comentario a una tarea."""
     tarea = obtener_tarea(indice)
     texto = request.form.get("comentario", "").strip()
     if not texto:
@@ -280,6 +298,7 @@ def agregar_comentario(indice):
 
 @app.post("/tareas/<int:indice>/eliminar")
 def eliminar_tarea(indice):
+    """Elimina una tarea y guarda la lista actualizada."""
     obtener_tarea(indice)
     tareas.pop(indice)
     guardar_tareas()
